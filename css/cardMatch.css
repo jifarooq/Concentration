@@ -1,0 +1,12 @@
+.hidden{
+	display: none;
+}
+
+body {
+	background-color: lightGreen;
+	font-family: verdana;
+}
+
+#pair-count {
+	font-weight: bold;
+}

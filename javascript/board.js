@@ -5,39 +5,42 @@
   }
 
 	var Board = CardMatch.Board = function() {
-		this.deckOrder = [];
+		this.imageOrder = [];
 		this.renderRows();
 		this.renderCardImages();
 	};
 
+	// must be even. can add enforcement for this later
+	DECKSIZE = 10;
+
 	Board.prototype.renderCardPosition = function(row, col) {
-		content = "<td id='card-placer-" + col + "' width=7%></td>"
+		content = "<td id='card-placer-" + col + "' width=7%></td>";
 		$('#row' + row).append(content);
 	};
 
 	Board.prototype.renderRows = function() {
-		var nums = _genSequence(52);
+		var nums = _genSequence(0, DECKSIZE - 1);
 
 		nums.forEach(function(num){
-			var row = Math.ceil(num / 52 * 4);
+			var row = Math.floor(num / DECKSIZE * 4);
 			this.renderCardPosition(row, num);
 		}.bind(this));	
 	}
 
 	Board.prototype.renderCardImages = function() {
-		var nums = _genSequence(52);
-		this.deckOrder = _shuffle(nums);
+		var nums = _genSequence(1, DECKSIZE);
+		this.imageOrder = _shuffle(nums);
 
-		for (var j = 1; j <= 52; j++){
-			var content = "<img class='shown' src='images/back_of_card.png'>"
+		for (var j = 0; j < DECKSIZE; j++){
+			var content = "<img class='shown' src='images/back_of_card.png'>";
 			$('#card-placer-' + j).html(content);
 		}
 	}
 
-	function _genSequence(n) {
+	function _genSequence(start, end) {
 		var nums = [];
 
-		for (var i = 1; i <= n; i++){
+		for (var i = start; i <= end; i++){
 			nums.push(i);
 		}
 
