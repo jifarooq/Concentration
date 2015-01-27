@@ -4,10 +4,13 @@
     window.CardMatch = {};
   }
 
-	var Player = CardMatch.Player = function() {
-		this.matchedPairsCount = 0,
+	var Player = CardMatch.Player = function(name) {
+		this.imageNums = [],
+		this.imageContent = "",
+		this.pairCount = 0,
+		this.name = name,
+		this.numberTurns = 0,
+		this.turnedCards = [];
 	};
-
-
 
 })();

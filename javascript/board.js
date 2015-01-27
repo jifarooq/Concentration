@@ -48,21 +48,16 @@
 	}
 
 	function _shuffle(arr){
-		var len = arr.length - 1, val, idx;
+		var len = arr.length - 1, val, rand_idx;
 
 		while (len) {
 			// randomly pick from remaining elements
-			idx = Math.floor(Math.random() * len);
+			rand_idx = Math.floor(Math.random() * len--);
 
-			// swap it with current value
-			val = arr[len];
-			arr[len] = arr[idx];
-			arr[idx] = val;
-
-			len--;
+			// swap last value with a random value
+			val = arr[len], arr[len] = arr[rand_idx], arr[rand_idx] = val;
 		}
 
 		return arr;
 	}
-
 })();

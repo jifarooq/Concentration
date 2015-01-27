@@ -7,21 +7,36 @@
 	var Game = CardMatch.Game = function() {
 		this.board = new CardMatch.Board(),
 		this.imageOrder = this.board.imageOrder,
-		this.matchedPairsCount = 0,
-		this.turnedCards = [],
-		this.imageNums = [];
+		this.player1 = new CardMatch.Player('jiffrey'),
+		this.player2 = new CardMatch.Player('bustin'),
+		this.curPlayer = this.player1,
 
 		this.addEvents();
 	};
 
-	TIMEOUT = 500;
+	TIMEOUT = 400;
 
 	// methods organized by game flow rather than alphabetically
 	Game.prototype.addEvents = function() {
 		$('.shown').on('click', this.revealCard.bind(this));
-		$('#show-matches').on('click', this.showMatchedCards);
-		$('#hide-matches').on('click', this.hideMatchedCards);
+		$('#show-matches').on('click', this.showMatchedCards.bind(this));
+		$('#hide-matches').on('click', this.hideMatchedCards.bind(this));
 	}
+
+	Game.prototype.togglePlayer = function() {
+		// hide matched cards for current player in case they're showing
+		$('#hide-matches').trigger('click');
+
+		if (this.curPlayer === this.player1) {
+			this.curPlayer = this.player2;
+			$('body').removeClass('player1-turn');
+			$('body').addClass('player2-turn');
+		} else {
+			this.curPlayer = this.player1;
+			$('body').removeClass('player2-turn');
+			$('body').addClass('player1-turn');
+		}
+	};
 
 	Game.prototype.revealCard = function() {
 		var parent = event.target.parentNode,
@@ -30,12 +45,12 @@
 
 		// ensure cardPosition is non-negative
 		var cardPosition = Math.abs(id.substr(len - 2, len));
-		this.turnedCards.push(cardPosition);
+		this.curPlayer.turnedCards.push(cardPosition);
 
 		var content = "<img src='images/" + this.imageOrder[cardPosition] + ".png'>";
 		$('#card-placer-' + cardPosition).html(content);
 
-		if (this.turnedCards.length === 2) {
+		if (this.curPlayer.turnedCards.length === 2) {
 			this.compareCards();
 		}
 	}
@@ -51,36 +66,38 @@
 	}
 
 	Game.prototype.evaluateCards = function() {
-		var pos1 = this.turnedCards[0],
-				pos2 = this.turnedCards[1];
-		this.imageNums = [this.imageOrder[pos1], this.imageOrder[pos2]];
+		var pos1 = this.curPlayer.turnedCards[0],
+				pos2 = this.curPlayer.turnedCards[1];
 
-		return [14 - Math.ceil(this.imageNums[0] / 4), 
-						14 - Math.ceil(this.imageNums[1] / 4)];
+		return [14 - Math.ceil(this.imageOrder[pos1] / 4), 
+						14 - Math.ceil(this.imageOrder[pos2] / 4)];
 	}
 
 	Game.prototype.addToMatchedCards = function() {
-		var imgContent = "";
+		var imgContent = "",
+				curP = (this.curPlayer === this.player1) ? 1 : 2;
+
 		for (var i = 0; i < 2; i++) {
-			$('#card-placer-' + this.turnedCards[i]).empty();	
-			imgContent += "<img src='images/" + this.imageNums[i] + ".png'>";
+			$('#card-placer-' + this.curPlayer.turnedCards[i]).empty();	
+			imgContent += "<img src='images/" + this.curPlayer.imageNums[i] + ".png'>";
 		}
-		$('#matches-holder').append(imgContent);
+		$('#matches-holder' + curP).append(imgContent);
 
-		// reset iVars
-		this.turnedCards = [], this.imageNums = [];
-		this.matchedPairsCount += 1;
-
-		$('#pair-count').html(this.matchedPairsCount + ' pairs matched');
+		this.resetInstanceVars(1);
+		$('#pair-count' + curP).html(this.curPlayer.pairCount + ' pairs matched');
 
 		// check if game over
-		if (this.matchedPairsCount === DECKSIZE / 2) {
-			alert("All the cards are matched. You win!")
+		var totalMatchedPairs = this.player1.pairCount + this.player2.pairCount;
+		if (totalMatchedPairs === DECKSIZE / 2) {
+			var winner = (this.player1.pairCount > this.player2.pairCount) ? this.player1 : this.player2,
+					msg = "All cards are matched. ";
+			msg += winner.name + " wins!";
+			alert(msg);
 		}
 	}
 
 	Game.prototype.flipCards = function() {
-		this.turnedCards.forEach(function(num){
+		this.curPlayer.turnedCards.forEach(function(num){
 			var content = "<img class='shown' src='images/back_of_card.png'>"
 			$('#card-placer-' + num).html(content);
 
@@ -89,17 +106,26 @@
 				.on("click", this.revealCard.bind(this));
 		}.bind(this));
 
-		this.turnedCards = [], this.imageNums = [];
+		this.resetInstanceVars(0);
+		this.togglePlayer();
+	}
+
+	Game.prototype.resetInstanceVars = function(num) {
+		this.curPlayer.turnedCards = [],
+		this.curPlayer.imageNums = [],
+		this.curPlayer.pairCount += num;
 	}
 
 	Game.prototype.showMatchedCards = function() {
-		$('#matches-holder').removeClass('hidden');
+		var curP = (this.curPlayer === this.player1) ? 1 : 2;
+		$('#matches-holder' + curP).removeClass('hidden');
 		$('#show-matches').addClass('hidden');
 		$('#hide-matches').removeClass('hidden');
 	}
 
 	Game.prototype.hideMatchedCards = function() {
-		$('#matches-holder').addClass('hidden');
+		var curP = (this.curPlayer === this.player1) ? 1 : 2;
+		$('#matches-holder' + curP).addClass('hidden');
 		$('#show-matches').removeClass('hidden');
 		$('#hide-matches').addClass('hidden');
 	}

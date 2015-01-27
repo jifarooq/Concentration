@@ -1,12 +1,19 @@
-.hidden{
-	display: none;
-}
-
 body {
-	background-color: lightGreen;
 	font-family: verdana;
 }
 
-#pair-count {
+.hidden {
+	display: none;
+}
+
+.bold {
 	font-weight: bold;
+}
+
+.player1-turn {
+	background-color: lightGreen;
+}
+
+.player2-turn {
+	background-color: salmon;	
 }
