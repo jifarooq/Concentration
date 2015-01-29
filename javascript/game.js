@@ -68,6 +68,7 @@
 	Game.prototype.evaluateCards = function() {
 		var pos1 = this.curPlayer.turnedCards[0],
 				pos2 = this.curPlayer.turnedCards[1];
+		this.curPlayer.imageNums = [this.imageOrder[pos1], this.imageOrder[pos2]];
 
 		return [14 - Math.ceil(this.imageOrder[pos1] / 4), 
 						14 - Math.ceil(this.imageOrder[pos2] / 4)];
