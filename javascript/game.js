@@ -12,11 +12,17 @@
 		this.curPlayer = this.player1,
 
 		this.addEvents();
+		this.announceTurn();
 	};
 
 	TIMEOUT = 400;
 
 	// methods organized by game flow rather than alphabetically
+	Game.prototype.announceTurn = function() {
+		content = "It's your turn " + this.curPlayer.name;
+		$('#tell-turn').html(content);
+	}
+
 	Game.prototype.addEvents = function() {
 		$('.shown').on('click', this.revealCard.bind(this));
 		$('#show-matches').on('click', this.showMatchedCards.bind(this));
@@ -36,6 +42,8 @@
 			$('body').removeClass('player2-turn');
 			$('body').addClass('player1-turn');
 		}
+
+		this.announceTurn();
 	};
 
 	Game.prototype.revealCard = function() {
@@ -86,13 +94,25 @@
 
 		this.resetInstanceVars(1);
 		$('#pair-count' + curP).html(this.curPlayer.pairCount + ' pairs matched');
+		this.checkForWinner();
+	}
 
-		// check if game over
+	Game.prototype.checkForWinner = function() {
 		var totalMatchedPairs = this.player1.pairCount + this.player2.pairCount;
+		
 		if (totalMatchedPairs === DECKSIZE / 2) {
-			var winner = (this.player1.pairCount > this.player2.pairCount) ? this.player1 : this.player2,
-					msg = "All cards are matched. ";
-			msg += winner.name + " wins!";
+			var msg = "All cards are matched. ",
+					p1Count = this.player1.pairCount, 
+					p2Count = this.player2.pairCount;
+
+			if (p1Count > p2Count) {
+				msg += this.player1.name + " wins!"
+			} else if (p1Count === p2Count) {
+				msg += "Tie game!"
+			} else {
+				msg += this.player2.name + " wins!"
+			}
+
 			alert(msg);
 		}
 	}

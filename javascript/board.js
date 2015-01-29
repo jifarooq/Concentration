@@ -11,7 +11,7 @@
 	};
 
 	// must be even. can add enforcement for this later
-	DECKSIZE = 10;
+	DECKSIZE = 8;
 
 	Board.prototype.renderCardPosition = function(row, col) {
 		content = "<td id='card-placer-" + col + "' width=7%></td>";
