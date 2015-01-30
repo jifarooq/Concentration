@@ -6,10 +6,12 @@
 
 	var Game = CardMatch.Game = function() {
 		this.board = new CardMatch.Board(),
-		this.imageOrder = this.board.imageOrder,
 		this.player1 = new CardMatch.Player('jiffrey'),
-		this.player2 = new CardMatch.Player('bustin'),
+		// this.player2 = new CardMatch.Player('bustin'),
+		this.player2 = new CardMatch.CompPlayer(),
 		this.curPlayer = this.player1,
+		this.imageOrder = this.board.imageOrder,
+		this.cardValues = [],
 
 		this.addEvents();
 		this.announceTurn();
@@ -19,8 +21,11 @@
 
 	// methods organized by game flow rather than alphabetically
 	Game.prototype.announceTurn = function() {
-		content = "It's your turn " + this.curPlayer.name;
+		var name = this.curPlayer.name,
+				content = "It's your turn " + name;
 		$('#tell-turn').html(content);
+		
+		if (name === 'computer') this.curPlayer.takeMove();
 	}
 
 	Game.prototype.addEvents = function() {
@@ -46,7 +51,7 @@
 		this.announceTurn();
 	};
 
-	Game.prototype.revealCard = function() {
+	Game.prototype.revealCard = function(event) {
 		var parent = event.target.parentNode,
 				id = parent.id, 
 				len = id.length;
@@ -58,28 +63,24 @@
 		var content = "<img src='images/" + this.imageOrder[cardPosition] + ".png'>";
 		$('#card-placer-' + cardPosition).html(content);
 
-		if (this.curPlayer.turnedCards.length === 2) {
-			this.compareCards();
-		}
+		if (this.curPlayer.turnedCards.length === 2) this.compareCards();
 	}
 
 	Game.prototype.compareCards = function() {
-		var cardValues = this.evaluateCards();
+		this.cardValues.push(this.evaluateCard(0)),
+		this.cardValues.push(this.evaluateCard(1));
 
-		if (cardValues[0] === cardValues[1]) {
+		if (this.cardValues[0] === this.cardValues[1]) {
 			setTimeout(this.addToMatchedCards.bind(this), TIMEOUT);
 		} else {
 			setTimeout(this.flipCards.bind(this), TIMEOUT);
 		}
 	}
 
-	Game.prototype.evaluateCards = function() {
-		var pos1 = this.curPlayer.turnedCards[0],
-				pos2 = this.curPlayer.turnedCards[1];
-		this.curPlayer.imageNums = [this.imageOrder[pos1], this.imageOrder[pos2]];
-
-		return [14 - Math.ceil(this.imageOrder[pos1] / 4), 
-						14 - Math.ceil(this.imageOrder[pos2] / 4)];
+	Game.prototype.evaluateCard = function(num) {
+		var pos = this.curPlayer.turnedCards[num];
+		this.curPlayer.imageNums.push(this.imageOrder[pos]);
+		return 14 - Math.ceil(this.imageOrder[pos] / 4);
 	}
 
 	Game.prototype.addToMatchedCards = function() {
@@ -114,6 +115,8 @@
 			}
 
 			alert(msg);
+		} else {		//ensure computer goes again!
+				if (this.curPlayer.name === 'computer') this.curPlayer.takeMove();
 		}
 	}
 
@@ -127,6 +130,9 @@
 				.on("click", this.revealCard.bind(this));
 		}.bind(this));
 
+		if (this.curPlayer.name === 'computer') 
+			this.curPlayer.addToSeen(this.cardValues);
+
 		this.resetInstanceVars(0);
 		this.togglePlayer();
 	}
@@ -134,7 +140,8 @@
 	Game.prototype.resetInstanceVars = function(num) {
 		this.curPlayer.turnedCards = [],
 		this.curPlayer.imageNums = [],
-		this.curPlayer.pairCount += num;
+		this.curPlayer.pairCount += num,
+		this.cardValues = [];
 	}
 
 	Game.prototype.showMatchedCards = function() {
