@@ -6,7 +6,7 @@
 
 	var Game = CardMatch.Game = function() {
 		this.board = new CardMatch.Board(),
-		this.player1 = new CardMatch.Player('jiffrey'),
+		this.player1 = new CardMatch.Player('justin'),
 		// this.player2 = new CardMatch.Player('bustin'),
 		this.player2 = new CardMatch.CompPlayer(),
 		this.curPlayer = this.player1,
@@ -77,6 +77,7 @@
 		}
 	}
 
+	// evaluate by size?
 	Game.prototype.evaluateCard = function(num) {
 		var pos = this.curPlayer.turnedCards[num];
 		this.curPlayer.imageNums.push(this.imageOrder[pos]);

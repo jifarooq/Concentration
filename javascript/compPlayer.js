@@ -18,10 +18,11 @@
 	CompPlayer.prototype.addToSeen = function(rank) {
 		var pos = _last(this.turnedCards);
 
-		if (!this.seenCards[rank])
-			this.seenCards[rank] = [pos];
-		else
+		if (this.seenCards.hasOwnProperty(rank)) { 
 			this.seenCards[rank].push(pos);
+		}
+		else
+			this.seenCards[rank] = [pos];
 	}
 
 	CompPlayer.prototype.pickRandCard = function() {
@@ -30,13 +31,12 @@
 				cardPicked = $cardsLeft[_randIndex(len)];
 
 		$(cardPicked).trigger('click');
-		var rank = game.evaluateCard(0);
-		debugger
+		var rank = game.evaluateCard();
 		this.addToSeen(rank);
 	}
 
 	CompPlayer.prototype.pickSmartCard = function() {
-		var rank = game.evaluateCard(0),
+		var rank = game.evaluateCard(),
 				pos = this.seenCards[rank][0],
 				selector = 'card-placer-' + pos + ' .shown';
 		
