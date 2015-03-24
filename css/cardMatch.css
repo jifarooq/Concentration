@@ -11,9 +11,9 @@ body {
 }
 
 .player1-turn {
-	background-color: PaleGreen;
+	background-color: salmon;
 }
 
 .player2-turn {
-	background-color: salmon;	
+	background-color: PaleGreen;
 }
