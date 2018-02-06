@@ -17,7 +17,7 @@
 		this.announceTurn();
 	};
 
-	TIMEOUT = 400;
+	TIMEOUT = 750;
 
 	// methods organized by game flow rather than alphabetically
 	Game.prototype.announceTurn = function() {

@@ -52,8 +52,8 @@
 	// to do
 	// prevent user from going while it's computer's move
 	CompPlayer.prototype.takeMove = function() {
-		setTimeout(this.pickRandCard.bind(this), 500);
-		setTimeout(this.pickSmartCard.bind(this), 1000);
+		setTimeout(this.pickRandCard.bind(this), 750);
+		setTimeout(this.pickSmartCard.bind(this), 1500);
 	}
 
 	function _randIndex(max) {
