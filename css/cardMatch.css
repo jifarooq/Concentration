@@ -1,19 +1,19 @@
 body {
-	font-family: verdana;
+  font-family: verdana;
 }
 
 .hidden {
-	display: none;
+  display: none;
 }
 
 .bold {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .player1-turn {
-	background-color: salmon;
+  background-color: salmon;
 }
 
 .player2-turn {
-	background-color: PaleGreen;
+  background-color: PaleGreen;
 }
